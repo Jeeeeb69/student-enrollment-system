@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: student-enrollment-backend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn enrollment_system.wsgi:application"
