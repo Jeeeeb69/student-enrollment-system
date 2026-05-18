@@ -1,7 +1,5 @@
 from pathlib import Path
 from datetime import timedelta
-import os
-from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,10 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = 'django-insecure-bfmb4@tb=c9g#t17yb*6sw+ey72%=e7saeme26wnoy6q^s0jx_'
 DEBUG = False
+
 ALLOWED_HOSTS = [
     "enrollment_system.onrender.com",
-    "localhost",
-    "127.0.0.1"
 ]
 
 
@@ -25,26 +22,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # your app
-    'core.apps.CoreConfig',
-
     # third-party
     'rest_framework',
     'corsheaders',
     'djoser',
     'rest_framework_simplejwt',
+
+    # your app
+    'core.apps.CoreConfig',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
 
-# MIDDLEWARE
+# MIDDLEWARE (FIXED ORDER)
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +72,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'enrollment_system.wsgi.application'
 
 
-# DATABASE
+# DATABASE (SQLite for now)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -88,18 +83,10 @@ DATABASES = {
 
 # PASSWORD VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -110,9 +97,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-# STATIC FILES
-STATIC_URL = 'static/'
+# STATIC FILES (RENDER FIX)
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
@@ -121,11 +109,23 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-# CORS (dev only)
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS (FIXED - NO DUPLICATES)
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://enrollment-frontend.vercel.app",
+]
 
 
-# AUTH USER MODEL (IMPORTANT)
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://enrollment-frontend.vercel.app",
+    "https://enrollment_system.onrender.com",
+]
+
+
+# CUSTOM USER
 AUTH_USER_MODEL = 'core.User'
 
 
@@ -146,18 +146,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://enrollment-frontend.vercel.app",
-    "https://enrollment_system.onrender.com"
-]
-
 
 # DJOSER
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': False,
-
     'SERIALIZERS': {
         'user_create': 'core.djoser_serializers.CustomUserCreateSerializer',
     },
