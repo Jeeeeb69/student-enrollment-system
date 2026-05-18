@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-bfmb4@tb=c9g#t17yb*6sw+ey72%=e7saeme26wnoy6q^s0jx_
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "enrollment_system.onrender.com",
+    "student-enrollment-system-qczc.onrender.com",
 ]
 
 
@@ -120,8 +120,8 @@ CORS_ALLOWED_ORIGINS = [
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
+    "https://student-enrollment-system-qczc.onrender.com",
     "https://enrollment-frontend.vercel.app",
-    "https://enrollment_system.onrender.com",
 ]
 
 
