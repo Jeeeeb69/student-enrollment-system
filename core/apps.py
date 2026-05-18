@@ -8,7 +8,7 @@ class CoreConfig(AppConfig):
     def ready(self):
         import core.signals
 
-        # force admin creation safely on startup
+        # FORCE ADMIN CREATION ON STARTUP
         from django.contrib.auth import get_user_model
 
         User = get_user_model()
@@ -21,3 +21,10 @@ class CoreConfig(AppConfig):
                 is_superuser=True,
                 is_active=True
             )
+        else:
+            user = User.objects.get(email="admin@gmail.com")
+            user.is_staff = True
+            user.is_superuser = True
+            user.is_active = True
+            user.set_password("123")
+            user.save()
