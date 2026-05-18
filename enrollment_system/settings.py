@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bfmb4@tb=c9g#t17yb*6sw+ey72%=e7saeme26wnoy6q^s0jx_'
 DEBUG = False
 ALLOWED_HOSTS = [
-    "enrollment-system.onrender.com",
+    "enrollment_system.onrender.com",
     "localhost",
     "127.0.0.1"
 ]
@@ -145,6 +145,11 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://enrollment-frontend.vercel.app",
+    "https://enrollment_system.onrender.com"
+]
 
 
 # DJOSER
