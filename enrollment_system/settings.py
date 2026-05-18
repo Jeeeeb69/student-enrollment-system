@@ -9,7 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = 'django-insecure-bfmb4@tb=c9g#t17yb*6sw+ey72%=e7saeme26wnoy6q^s0jx_'
 DEBUG = False
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "enrollment-system.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 
 
 # APPLICATIONS
