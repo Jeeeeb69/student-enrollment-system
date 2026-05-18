@@ -1,0 +1,1 @@
+web: gunicorn enrollment_system.wsgi:application
