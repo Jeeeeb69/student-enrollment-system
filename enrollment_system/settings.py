@@ -1,15 +1,40 @@
+import os
 from pathlib import Path
 from datetime import timedelta
 
+import dj_database_url
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).lower() in {"1", "true", "yes", "on"}
+
+
+def env_list(name, default=""):
+    return [
+        value.strip()
+        for value in os.getenv(name, default).split(",")
+        if value.strip()
+    ]
 
 
 # SECURITY
-SECRET_KEY = 'django-insecure-bfmb4@tb=c9g#t17yb*6sw+ey72%=e7saeme26wnoy6q^s0jx_'
-DEBUG = False
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-local-development-key-change-before-deployment"
+)
+
+DEBUG = env_bool("DEBUG", False)
 
 ALLOWED_HOSTS = [
-    "student-enrollment-system-qczc.onrender.com",
+    *env_list(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1,student-enrollment-system-qczc.onrender.com"
+    )
 ]
 
 
@@ -72,13 +97,24 @@ TEMPLATES = [
 WSGI_APPLICATION = 'enrollment_system.wsgi.application'
 
 
-# DATABASE (SQLite for now)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# DATABASE
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=env_bool("DATABASE_SSL_REQUIRE", False),
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # PASSWORD VALIDATION
@@ -101,7 +137,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # MEDIA FILES
@@ -112,17 +155,21 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # CORS (FIXED - NO DUPLICATES)
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://enrollment-frontend.vercel.app",
-]
+CORS_ALLOWED_ORIGINS = env_list(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:3000,https://enrollment-frontend.vercel.app"
+)
 
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = [
-    "https://student-enrollment-system-qczc.onrender.com",
-    "https://enrollment-frontend.vercel.app",
-]
+CSRF_TRUSTED_ORIGINS = env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000,"
+    "https://student-enrollment-system-qczc.onrender.com,"
+    "https://enrollment-frontend.vercel.app"
+)
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # CUSTOM USER

@@ -1,3 +1,5 @@
+import os
+
 from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
@@ -43,13 +45,16 @@ def sync_student(sender, instance, created, **kwargs):
 @receiver(post_migrate)
 def create_admin_user(sender, **kwargs):
     """
-    Ensures admin ALWAYS exists on Render (no shell needed).
+    Creates an initial admin only when deployment env vars are provided.
     """
     if sender.name != "core":
         return
 
-    admin_email = "admin@gmail.com"
-    admin_password = "123"
+    admin_email = os.getenv("DJANGO_SUPERUSER_EMAIL")
+    admin_password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
+
+    if not admin_email or not admin_password:
+        return
 
     user, created = User.objects.get_or_create(
         email=admin_email,
@@ -65,6 +70,5 @@ def create_admin_user(sender, **kwargs):
     user.is_superuser = True
     user.is_active = True
 
-    # Ensure password is always correct (for your case)
     user.set_password(admin_password)
     user.save()
