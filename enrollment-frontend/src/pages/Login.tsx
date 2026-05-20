@@ -1,5 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
 import { Link } from "react-router-dom";
+import api from "../api/axios";
 
 /* ─── Responsive hook ────────────────────────────────────────────────────── */
 function useWindowSize() {
@@ -218,22 +219,24 @@ const Login = () => {
     setErrorMsg("");
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/auth/jwt/create/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const res = await api.post("auth/jwt/create/", {
+        email,
+        password,
       });
-      const data = await res.json().catch(() => null);
-      if (res.ok && data?.access) {
-        localStorage.setItem("token", data.access);
-        localStorage.setItem("refresh", data.refresh);
+      if (res.data?.access) {
+        localStorage.setItem("token", res.data.access);
+        localStorage.setItem("refresh", res.data.refresh);
         window.location.href = "/profile";
       } else {
-        setErrorMsg(data?.detail || data?.message || "Invalid credentials. Please try again.");
+        setErrorMsg("Invalid credentials. Please try again.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErrorMsg("Server error. Please try again.");
+      setErrorMsg(
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        "Server error. Please try again."
+      );
     } finally {
       setLoading(false);
     }

@@ -149,8 +149,14 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = env_list(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost:3000,https://enrollment-frontend.vercel.app"
+    "http://localhost:3000,"
+    "https://enrollment-frontend.vercel.app,"
+    "https://student-enrollment-system-3i9h-15pwgvn94-jeb-s-projects.vercel.app"
 )
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://student-enrollment-system-[a-z0-9-]+-jeb-s-projects\.vercel\.app$",
+]
 
 
 # CSRF
@@ -159,7 +165,8 @@ CSRF_TRUSTED_ORIGINS = env_list(
     "http://localhost:3000,http://127.0.0.1:3000,"
     "https://student-enrollment-system-1-6qtc.onrender.com,"
     "https://student-enrollment-system-qczc.onrender.com,"
-    "https://enrollment-frontend.vercel.app"
+    "https://enrollment-frontend.vercel.app,"
+    "https://student-enrollment-system-3i9h-15pwgvn94-jeb-s-projects.vercel.app"
 )
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

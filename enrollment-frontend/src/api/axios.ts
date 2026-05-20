@@ -1,7 +1,14 @@
 import axios from "axios";
 
+const DEPLOYED_API_URL = "https://student-enrollment-system-1-6qtc.onrender.com/api";
+const LOCAL_API_URL = "http://127.0.0.1:8000/api";
+
+const isLocalhost =
+  typeof window !== "undefined" &&
+  ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
 const API_BASE_URL = (
-  process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api"
+  process.env.REACT_APP_API_URL || (isLocalhost ? LOCAL_API_URL : DEPLOYED_API_URL)
 ).replace(/\/+$/, "");
 
 const api = axios.create({
