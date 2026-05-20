@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +32,9 @@ DEBUG = env_bool("DEBUG", False)
 ALLOWED_HOSTS = [
     *env_list(
         "ALLOWED_HOSTS",
-        "localhost,127.0.0.1,student-enrollment-system-qczc.onrender.com"
+        "localhost,127.0.0.1,"
+        "student-enrollment-system-1-6qtc.onrender.com,"
+        "student-enrollment-system-qczc.onrender.com"
     )
 ]
 
@@ -98,23 +99,14 @@ WSGI_APPLICATION = 'enrollment_system.wsgi.application'
 
 
 # DATABASE
-DATABASE_URL = os.getenv("DATABASE_URL")
+SQLITE_PATH = os.getenv("SQLITE_PATH")
 
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=env_bool("DATABASE_SSL_REQUIRE", False),
-        )
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": SQLITE_PATH or BASE_DIR / "db.sqlite3",
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
 
 
 # PASSWORD VALIDATION
@@ -165,6 +157,7 @@ CORS_ALLOWED_ORIGINS = env_list(
 CSRF_TRUSTED_ORIGINS = env_list(
     "CSRF_TRUSTED_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000,"
+    "https://student-enrollment-system-1-6qtc.onrender.com,"
     "https://student-enrollment-system-qczc.onrender.com,"
     "https://enrollment-frontend.vercel.app"
 )
