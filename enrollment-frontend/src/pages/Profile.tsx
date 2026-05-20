@@ -28,10 +28,6 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const { isMobile, isTablet } = useWindowSize();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = useCallback(async () => {
     try {
       const res = await api.get("profile/");
@@ -42,6 +38,10 @@ export default function Profile() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -156,7 +156,7 @@ export default function Profile() {
   const AvatarRing = ({ size }: { size: number }) => (
     <div style={{ ...s.avatarFrame, width: size, height: size }}>
       {profile.profile_picture ? (
-        <img src={profile.profile_picture} alt="Student photo" style={s.avatarImg} />
+        <img src={profile.profile_picture} alt="Student" style={s.avatarImg} />
       ) : (
         <div style={{ ...s.avatarInitials, fontSize: size * 0.28 }}>{initials}</div>
       )}

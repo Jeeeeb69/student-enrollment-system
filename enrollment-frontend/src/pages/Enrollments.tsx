@@ -35,7 +35,6 @@ export default function Enrollments() {
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
   const { isMobile, isTablet } = useWindowSize();
-  const isNarrow = isMobile || isTablet;
 
   /* ── Toast ─────────────────────────────────────────────────────────────── */
   const showToast = (msg: string, type: "success" | "error") => {

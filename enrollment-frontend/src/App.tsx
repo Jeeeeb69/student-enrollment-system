@@ -99,7 +99,6 @@ function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { isMobile, isTablet, isDesktop } = useWindowSize();
-  const isNarrow = isMobile || isTablet;
 
   // Close drawer when resizing to desktop
   useEffect(() => {
